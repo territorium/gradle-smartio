@@ -1,0 +1,57 @@
+plugins {
+  id 'com.gradle.plugin-publish' version '1.2.1'
+  id 'java-gradle-plugin'
+  id 'maven-publish'
+}
+
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+}
+
+
+version = '0.2.6'
+group	= 'it.smartio'
+
+
+java {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_17
+}
+
+
+allprojects {
+    tasks.withType(Javadoc).all { enabled = false }
+}
+
+
+dependencies {
+  implementation gradleApi()
+
+  // https://mvnrepository.com/artifact/org.apache.xmlgraphics/fop
+  implementation group: 'org.apache.xmlgraphics', name: 'fop', version: '2.9'
+  // https://mvnrepository.com/artifact/org.commonmark/commonmark
+  implementation group: 'org.commonmark', name: 'commonmark', version: '0.22.0'
+
+
+  // Use JUnit test framework
+  // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
+  testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+}
+
+
+// Configured to publish your plugin to the plugin portal
+gradlePlugin {
+  website = 'https://www.tol.info'
+  vcsUrl  = 'https://github.com/tol-smartio/markdown.git'
+  plugins {
+    create("build") {
+      id = 'it.smartio.gradle.markdown'
+      displayName = 'Markdown documenter'
+      implementationClass = 'it.smartio.build.gradle.MarkdownGradle'
+      description = "Gradle plugin to convert markdown documents into a PDF!"
+      tags.set(["markdown", "document"])
+    }
+  }
+}

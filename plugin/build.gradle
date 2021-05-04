@@ -1,0 +1,95 @@
+plugins {
+  id 'com.gradle.plugin-publish' version '1.2.1'
+  id 'java-gradle-plugin'
+  id 'maven-publish'
+}
+
+
+// Apply the java-library plugin to add support for Java Library
+apply plugin: 'java'
+apply plugin: 'java-library'
+apply plugin: 'java-gradle-plugin'
+
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+}
+
+
+version = '0.8.3'
+group	= 'it.smartio'
+
+
+java {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+
+allprojects {
+    tasks.withType(Javadoc).all { enabled = false }
+}
+
+
+dependencies {
+  implementation gradleApi()
+
+  // https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit
+  implementation group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '5.13.1.202206130422-r'
+  // implementation group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '6.5.0.202303070854-r'
+
+  // https://mvnrepository.com/artifact/org.glassfish/javax.json
+  implementation group: 'org.glassfish', name: 'javax.json', version: '1.1.4'
+  
+  // https://mvnrepository.com/artifact/org.apache.commons/commons-compress
+  implementation group: 'org.apache.commons', name: 'commons-compress', version: '1.23.0'
+   
+  // https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-codec
+  implementation group: 'org.apache.xmlgraphics', name: 'batik-codec', version: '1.17'
+  implementation group: 'org.apache.xmlgraphics', name: 'batik-transcoder', version: '1.17' 
+
+  // https://mvnrepository.com/artifact/com.github.docker-java/docker-java
+  implementation group: 'com.github.docker-java', name: 'docker-java', version: '3.3.0'
+  
+  // https://mvnrepository.com/artifact/com.sun.mail/javax.mail
+  implementation group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
+
+
+  // Use JUnit test framework
+  // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
+  testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+}
+
+
+sourceSets {
+  main {
+    java {
+      // Exclude build of Maven Plugin extending Mojo
+      exclude '**/*Mojo.java'
+    }
+  }
+  test {
+    java {
+      compileClasspath += configurations.compileOnly
+      runtimeClasspath += configurations.compileOnly
+    }
+  }
+}
+
+
+// Configured to publish your plugin to the plugin portal
+gradlePlugin {
+  website = 'https://www.tol.info'
+  vcsUrl  = 'https://github.com/tol-smartio/markdown.git'
+  plugins {
+    create("gradle") {
+      id = 'it.smartio.gradle'
+      displayName = 'smart.IO Build plugin'
+      description = 'Build tools to '
+      implementationClass = 'it.smartio.gradle.BuildPlugin'
+      description = "Gradle plugin to build the smart.IO framework!"
+      tags.set(["smartio", "build", "cd"])
+    }
+  }
+}

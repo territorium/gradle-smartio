@@ -1,0 +1,15 @@
+<div class="form_item_block">
+	<label>Command:<span class="asterisk">*</span></label> <input type="text" ng-model="command" tabindex="1" required="required"></input>
+	<span>The command or script to be executed, relative to the working directory</span>
+</div>
+
+<div class="form_item_block">
+	<label>Parameters:</label>
+	<textarea ng-model="parameter" ng-required="false" tabindex="2" rows="5"></textarea>
+	<span>Enter each parameter on a new line</span>
+</div>
+
+<div class="form_item_block">
+	<label>Gradle Directory:</label> <input type="text" ng-model="workingDir" tabindex="3"></input>
+	<span>The directory in which the script or command is to be executed. This is always relative to the directory where the agent checks out materials.</span>
+</div>

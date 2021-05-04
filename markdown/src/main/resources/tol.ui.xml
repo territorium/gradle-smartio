@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE template>
+<template width="210mm" height="297mm">
+	<symbols uri=":fonts/MaterialIcons-Regular.ttf.codepoints">
+		<symbol name="web" codepoint="language" />
+		<symbol name="mobile" codepoint="smartphone" />
+		<symbol name="config" codepoint="miscellaneous_services" />	
+	</symbols>
+
+	<formatter pattern="TOL" value="{{TOL;bold,#000000}}" />
+	<formatter pattern="smart\.IO" value="{{smart.;bold}}{{IO;bold,#c10076}}" />
+
+	<font name="TEXT">
+		<font-metric uri=":fonts/RobotoCondensed-Regular.ttf" />
+		<font-metric uri=":fonts/RobotoCondensed-Bold.ttf" bold="true" />
+		<font-metric uri=":fonts/RobotoCondensed-Italic.ttf" italic="true" />
+		<font-metric uri=":fonts/RobotoCondensed-BoldItalic.ttf" bold="true" italic="true" />
+	</font>
+	<font name="MONO">
+		<font-metric uri=":fonts/UbuntuMono-Regular.ttf" />
+		<font-metric uri=":fonts/UbuntuMono-Bold.ttf" bold="true" />
+		<font-metric uri=":fonts/UbuntuMono-Italic.ttf" italic="true" />
+		<font-metric uri=":fonts/UbuntuMono-BoldItalic.ttf" bold="true" italic="true" />
+	</font>
+	<font name="SYMBOLS">
+		<font-metric uri=":fonts/MaterialIcons-Regular.ttf" />
+	</font>
+
+	<page name="cover" width="210mm" height="297mm" padding="210mm,0,70mm,2.7in">
+		<region position="top" extent="243mm" background=":tol-background.jpg">
+			<panel top="187mm" left="2.5in" right="0" bottom="16mm" background="#469ba5">
+				<panel top="0" left="0.2in" right="0.2in" bottom="0">
+					<text color="white" font-size="48pt" font-weight="bold" line-height="1.4em">smart.IO</text>
+				</panel>
+			</panel>
+		</region>
+		<region position="bottom" extent="54mm">
+			<panel top="7mm" left="0.5in" right="14cm" bottom="0mm">
+				<image uri=":tol-logo.png" />
+			</panel>
+			<panel top="7mm" left="7cm" right="7cm" bottom="0mm" font-size="10pt" line-height="1.6em">
+				<text font-size="12pt" font-weight="bold">TOL GmbH</text>
+				<text font-style="italic">Head Quarter</text>
+				<text />
+				<text>Heinrich-Hertz-Straße 13</text>
+				<text>D-69190 Walldorf</text>
+				<text>Phone: +49 (0)6227 8994560</text>
+				<text>E-Mail: [office@tol.info](office@tol.info)</text>
+			</panel>
+			<panel top="7mm" left="14cm" right="0.5in" bottom="0mm" font-size="10pt" line-height="1.6em">
+				<text font-size="12pt" font-weight="bold">Territorium Online SRL</text>
+				<text font-style="italic">Software Department</text>
+				<text />
+				<text>Via B. Buozzi 12</text>
+				<text>I-39100 Bolzano (BZ)</text>
+				<text>Phone: +39 0471 068600</text>
+				<text>E-Mail: [contact@tol.info](contact@tol.info)</text>
+			</panel>
+		</region>
+	</page>
+	<page name="title" padding="7.5in,1in,1in,1in" column-count="2" column-gap="12pt">
+		<region position="top" extent="297mm" background="#469ba5">
+			<panel top="1in" left="1in" right="1in" bottom="1in">
+				<text color="#4da8b3" font-size="256pt" font-weight="bold">{{$CHAPTER}}</text>
+			</panel>
+			<panel top="140mm" left="1in" right="1in" bottom="1in">
+				<text color="#eeeeee" font-size="42pt" font-weight="bold">{{$TITLE}}</text>
+			</panel>
+		</region>
+	</page>
+	<page name="odd" padding="0.75in">
+		<region position="top" extent="8mm">
+			<panel top="0mm" left="130mm" right="10mm" bottom="0mm" background="#469ba5">
+				<text color="#ffffff" font-size="13pt" text-align="center" top="0.2em">{{$TITLE}}</text>
+			</panel>
+		</region>
+		<region position="bottom" extent="10mm">
+			<panel top="0mm" left="190mm" right="10mm" bottom="0mm" background="#469ba5">
+				<text color="#ffffff" text-align="center" top="0.5em">{{$PAGE_NUMBER}}</text>
+			</panel>
+		</region>
+	</page>
+	<page name="even" padding="0.75in">
+		<region position="top" extent="8mm">
+			<panel top="0mm" left="10mm" right="130mm" bottom="0mm" background="#469ba5">
+				<text color="#ffffff" font-size="13pt" text-align="center" top="0.2em">{{$TITLE}}</text>
+			</panel>
+		</region>
+		<region position="bottom" extent="10mm">
+			<panel top="0mm" left="10mm" right="190mm" bottom="0mm" background="#469ba5">
+				<text color="#ffffff" text-align="center" top="0.5em">{{$PAGE_NUMBER}}</text>
+			</panel>
+		</region>
+	</page>
+	<page name="blank" />
+
+    <page-set name="book">
+	    <page-entry name="cover" position="First" orientation="Any" />
+	    <page-entry name="odd" position="Any" orientation="Odd" />
+	    <page-entry name="even" position="Any" orientation="Even" />
+	    <page-entry name="blank" blank="Blank" />
+    </page-set>
+
+    <page-set name="chapter">
+	    <page-entry name="title" position="First" orientation="Any" />
+	    <page-entry name="odd" position="Any" orientation="Odd" />
+	    <page-entry name="even" position="Any" orientation="Even" />
+	    <page-entry name="blank" blank="Blank" />
+    </page-set>
+
+    <page-set name="standard">
+	    <page-entry name="odd" position="Any" orientation="Odd" />
+	    <page-entry name="even" position="Any" orientation="Even" />
+	    <page-entry name="blank" blank="Blank" />
+    </page-set>
+</template>

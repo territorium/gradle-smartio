@@ -1,0 +1,144 @@
+/*
+ * Copyright 2019 ThoughtWorks, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Apply the java-library plugin to add support for Java Library
+apply plugin: 'java'
+apply plugin: 'java-library'
+
+def gitRevision = { ->
+  def hashStdOut = new ByteArrayOutputStream()
+  exec {
+    commandLine "git", "log", "-n", "1", "--format=%H"
+    standardOutput = hashStdOut
+  }
+
+  return hashStdOut.toString().trim()
+}
+
+project.ext.gitRevision = gitRevision()
+
+group = 'it.smartio.gocd.plugin'
+version = '1.0.1'
+
+// these values that go into plugin.xml
+project.ext.pluginDesc = [
+  id         : 'cd.go.task.gradle',
+  version    : project.version,
+  goCdVersion: '20.10.0',
+  name       : 'Gradle Task Plugin for GoCD',
+  description: 'Supports gradle projects',
+  vendorName : 'TOL GmbH',
+  vendorUrl  : 'https://github.com/territorium/gocd-archive-task-plugin.git'
+]
+
+
+java {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+
+repositories {
+  jcenter()
+  mavenLocal()
+}
+
+sourceSets {
+  test {
+    java {
+      compileClasspath += configurations.compileOnly
+      runtimeClasspath += configurations.compileOnly
+    }
+  }
+}
+
+configurations.implementation.canBeResolved = true
+configurations.api.canBeResolved = true
+
+dependencies {
+  // https://mvnrepository.com/artifact/cd.go.plugin/go-plugin-api
+  compileOnly group: 'cd.go.plugin', name: 'go-plugin-api', version: '23.1.0'
+  //implementation group: 'cd.go.plugin', name: 'go-plugin-api', version: '21.3.0'
+  
+  // https://mvnrepository.com/artifact/org.glassfish/javax.json
+  implementation group: 'org.glassfish', name: 'javax.json', version: '1.1.4'
+
+
+  // Use JUnit test framework
+  // https://mvnrepository.com/artifact/junit/junit
+  testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+  // https://mvnrepository.com/artifact/org.hamcrest/hamcrest-library
+  testImplementation group: 'org.hamcrest', name: 'hamcrest-library', version: '2.2'
+  // https://mvnrepository.com/artifact/org.skyscreamer/jsonassert
+  testImplementation group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
+}
+
+processResources {
+  from("src/main/resource-templates") {
+    filesMatching('plugin.xml') {
+      expand project.pluginDesc
+    }
+
+    filesMatching('plugin.properties') {
+      expand project.pluginDesc
+    }
+  }
+}
+
+test {
+  testLogging {
+    showStandardStreams = true
+
+    exceptionFormat 'full'
+
+    beforeSuite { suite ->
+      if (suite.parent) {
+        logger.quiet("Running ${suite.name}")
+      }
+    }
+
+    afterSuite { suite, result ->
+      if (suite.parent) {
+        logger.quiet("Tests run: ${result.testCount}, Failures: ${result.failedTestCount}, Skipped: ${result.skippedTestCount}, Time elapsed: ${(result.endTime - result.startTime) / 1000.00} sec")
+        if (result.resultType == TestResult.ResultType.FAILURE) {
+          logger.quiet("Test ${suite.name} FAILED")
+        }
+      } else {
+        logger.quiet("Total tests run: ${result.testCount}, Failures: ${result.failedTestCount}, Skipped: ${result.skippedTestCount}, Time elapsed: ${(result.endTime - result.startTime) / 1000.00} sec")
+      }
+    }
+  }
+}
+
+jar {
+  manifest {
+    attributes(
+      'Go-Version': project.version,
+      'Go-Revision': project.gitRevision,
+      'Implementation-Title': project.name,
+      'Implementation-Version': project.version,
+      'Source-Compatibility': project.sourceCompatibility,
+      'Target-Compatibility': project.targetCompatibility
+    )
+  }
+
+  from(configurations.implementation) {
+    into "lib/"
+  }
+  from(sourceSets.main.java) {
+    into "/"
+  }
+}
