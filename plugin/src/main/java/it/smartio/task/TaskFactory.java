@@ -16,33 +16,39 @@
 package it.smartio.task;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import it.smartio.common.task.Task;
 import it.smartio.gradle.Arguments;
+import it.smartio.task.TaskDefinition.Builder;
+import it.smartio.task.TaskDefinition.TaskCreator;
 
 /**
  * The {@link TaskFactory} implements a factory to create instances of tasks from the arguments.
  */
 public class TaskFactory {
 
-  private final Map<String, Constructor> constructors;
+  private final Map<String, TaskDefinition> definitions = new HashMap<>();
 
   /**
-   * Constructs an instance of {@link TaskFactory}.
+   * Add a {@link TaskDefinition}.
    *
-   * @param constructors
+   * @param name
+   * @param constructor
    */
-  protected TaskFactory(Map<String, Constructor> constructors) {
-    this.constructors = constructors;
+  public final Builder add(String name, TaskCreator constructor) {
+    TaskDefinition definition = new TaskDefinition(name, constructor);
+    this.definitions.put(name, definition);
+    return definition.new Builder();
   }
 
   /**
-   * Create the set of {@link Task}'s.
+   * Get the collection of task definitions.
    */
-  public final Set<String> getTasks() {
-    return this.constructors.keySet();
+  public final Collection<TaskDefinition> getTasks() {
+    return this.definitions.values();
   }
 
   /**
@@ -53,19 +59,10 @@ public class TaskFactory {
    * @param workingDir
    */
   public final Task createTask(String name, Arguments arguments, File workingDir) {
-    if (this.constructors.containsKey(name)) {
-      return this.constructors.get(name).create(arguments, workingDir);
+    if (this.definitions.containsKey(name)) {
+      return this.definitions.get(name).create(arguments, workingDir);
     } else {
       return c -> c.getLogger().onInfo("Task '{}' not found!", name);
     }
-  }
-
-  /**
-   * The {@link Constructor} the defines the lambda function to create a {@link Task}.
-   */
-  @FunctionalInterface
-  protected static interface Constructor {
-
-    Task create(Arguments arguments, File workingDir);
   }
 }

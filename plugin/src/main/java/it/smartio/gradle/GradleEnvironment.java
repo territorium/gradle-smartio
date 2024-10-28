@@ -15,6 +15,8 @@
 
 package it.smartio.gradle;
 
+import org.gradle.api.logging.Logger;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -23,8 +25,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Properties;
-
-import org.gradle.api.logging.Logger;
 
 import it.smartio.build.Build;
 import it.smartio.build.QtPlatform;
@@ -283,6 +283,7 @@ public class GradleEnvironment extends EnvironmentVariables {
       try {
         props.load(new FileReader(buildProperties));
         setVariable(Build.PRODUCT_NAME, props.getProperty("name"));
+        setVariable(Build.PRODUCT_FILE, props.getProperty("file"));
         setVariable(Build.IOS_EXPORT_ID, props.getProperty("ios.id"));
         setVariable(Build.ANDROID_ID, props.getProperty("android.id"));
       } catch (IOException e) {

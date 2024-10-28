@@ -22,6 +22,7 @@ package it.smartio.task.product;
 public interface Branding {
 
   String NAME       = "PRODUCT_NAME";
+  String FILE       = "PRODUCT_FILE";
 
   String ICON       = "PRODUCT_ICON";
   String LOGO       = "PRODUCT_LOGO";

@@ -8,4 +8,5 @@ pluginManagement {
 
 rootProject.name = 'gradle-plugins' 
 
-include 'example'
+include 'markdown'
+include 'plugin'

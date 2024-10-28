@@ -64,8 +64,11 @@ public class AndroidDeployTask extends TaskList {
 		return this.targetName;
 	}
 
-	protected final String getTargetName(Environment env) {
-		return env.isSet(Build.PRODUCT_NAME) ? env.get(Build.PRODUCT_NAME) : this.targetName;
+	protected final String getFileName(Environment env) {
+		if (env.isSet(Build.PRODUCT_FILE) && env.get(Build.PRODUCT_FILE) != null) {
+			return env.get(Build.PRODUCT_FILE);
+		}
+		return env.isSet(Build.PRODUCT_NAME) ? env.get(Build.PRODUCT_NAME) : getTargetName();
 	}
 
 	/**
@@ -77,6 +80,9 @@ public class AndroidDeployTask extends TaskList {
 
 	@Override
 	protected final void collect(List<Task> tasks, TaskContext context) {
+		context.getLogger().onInfo("{} => {}", context.getEnvironment().get(Build.PRODUCT_NAME),
+				context.getEnvironment().get(Build.PRODUCT_FILE));
+
 		int buildNumber = Integer.parseInt(context.getEnvironment().get(Build.BUILDNUMBER));
 		File buildPath = new File(context.getEnvironment().get(Build.BUILD_DIR), this.moduleName);
 		String version = context.getEnvironment().get(Build.QT_VERSION);
@@ -98,7 +104,7 @@ public class AndroidDeployTask extends TaskList {
 					String sourceFilename = String.format(AndroidDeployTask.SOURCE_APK, getModuleName(), abi, buildFile,
 							buildFile);
 					String targetFilename = String.format(AndroidDeployTask.TARGET_APK,
-							getTargetName(context.getEnvironment()), abi);
+							getFileName(context.getEnvironment()), abi);
 					tasks.add(new CopyTask(sourceFilename, targetFilename));
 				}
 			}
@@ -108,8 +114,7 @@ public class AndroidDeployTask extends TaskList {
 			tasks.add(new AndroidDeploy(buildDir, buildFile, true));
 
 			String sourceFilename = String.format(AndroidDeployTask.SOURCE_AAB, getModuleName(), buildFile, buildFile);
-			String targetFilename = String.format(AndroidDeployTask.TARGET_AAB,
-					getTargetName(context.getEnvironment()));
+			String targetFilename = String.format(AndroidDeployTask.TARGET_AAB, getFileName(context.getEnvironment()));
 			tasks.add(new CopyTask(sourceFilename, targetFilename));
 
 		} catch (Throwable e) {

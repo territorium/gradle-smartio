@@ -15,7 +15,7 @@ A gradle project needs only 1 (often 2 files):
 Gradle allows to define custom plugins that can be published to the Gradle repository. For testing usually we publish only to the local maven repository.
 
 ~~~
-./gradlew clean publishToMavenLocal
+./gradlew clean :markdown:publishToMavenLocal
 	OR
-./gradlew clean publishPlugins
+./gradlew clean :markdown:publishPlugins
 ~~~

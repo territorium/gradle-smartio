@@ -15,10 +15,10 @@
 
 package it.smartio.gradle;
 
+import org.gradle.api.logging.Logger;
+
 import java.io.File;
 import java.io.InputStream;
-
-import org.gradle.api.logging.Logger;
 
 import it.smartio.common.env.Environment;
 import it.smartio.common.task.TaskContextAsync;

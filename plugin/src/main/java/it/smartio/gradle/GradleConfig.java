@@ -15,17 +15,19 @@
 
 package it.smartio.gradle;
 
+import org.gradle.api.Action;
+import org.gradle.api.Project;
+import org.gradle.api.logging.Logger;
+import org.gradle.api.provider.ListProperty;
+import org.gradle.api.tasks.Nested;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-
-import org.gradle.api.Action;
-import org.gradle.api.Project;
-import org.gradle.api.provider.ListProperty;
-import org.gradle.api.tasks.Nested;
 
 import it.smartio.common.env.Environment;
 import it.smartio.gradle.config.AndroidConfig;
@@ -171,5 +173,23 @@ public abstract class GradleConfig {
       env.put(Git.MODULES, getParameter("modules"));
     }
     return env;
+  }
+  /**
+   * Gets the {@link Environment}.
+   * 
+   * @param logger
+   * @param workingDir
+   */
+  public final Environment getEnvironment(Logger logger, File workingDir) {
+    Environment environment = Environment.system();
+    logger.warn("Environment variables: loading...");
+    try {
+      environment = GradleEnvironment.parse(this, workingDir, environment);
+    } catch (IOException e) {
+      logger.error("Couldn't load environment variables!", e);
+      throw new RuntimeException(e);
+    }
+    logger.warn("Environment variables: loaded!");
+    return environment;
   }
 }

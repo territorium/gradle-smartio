@@ -5,6 +5,8 @@
 package it.smartio.util.archive;
 
 
+import org.apache.commons.compress.utils.IOUtils;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -16,8 +18,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import org.apache.commons.compress.utils.IOUtils;
 
 /**
  *

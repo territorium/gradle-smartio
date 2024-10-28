@@ -15,16 +15,16 @@
 
 package it.smartio.util.svg;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-
 import org.apache.batik.transcoder.SVGAbstractTranscoder;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 
 /**
  * The {@link SVGTools} class.

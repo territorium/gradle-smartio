@@ -15,12 +15,12 @@
 
 package it.smartio.task.product;
 
+import org.apache.batik.transcoder.TranscoderException;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import org.apache.batik.transcoder.TranscoderException;
 
 import it.smartio.util.svg.SVGDocument;
 import it.smartio.util.svg.SVGTools;

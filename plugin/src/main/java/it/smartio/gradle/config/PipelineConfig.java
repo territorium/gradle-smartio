@@ -15,17 +15,17 @@
 
 package it.smartio.gradle.config;
 
+import org.gradle.api.Action;
+import org.gradle.api.Project;
+import org.gradle.api.provider.ListProperty;
+import org.gradle.api.tasks.Nested;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-
-import org.gradle.api.Action;
-import org.gradle.api.Project;
-import org.gradle.api.provider.ListProperty;
-import org.gradle.api.tasks.Nested;
 
 /**
  * The {@link PipelineConfig} class.

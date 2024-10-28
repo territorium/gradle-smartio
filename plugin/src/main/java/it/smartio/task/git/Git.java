@@ -29,4 +29,10 @@ public interface Git {
   String PASSWORD = "GIT_PASSWORD";
 
   String MODULES  = "GIT_MODULES";
+
+  public enum Release {
+    None,
+    Patch,
+    Release;
+  }
 }

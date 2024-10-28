@@ -90,6 +90,7 @@ public class BrandingTask implements Task {
       properties.load(new FileReader(new File(workingDir, "build.properties")));
 
       vars.put(Branding.NAME, properties.getProperty("name"));
+      vars.put(Branding.FILE, properties.getProperty("file"));
       vars.put(Branding.ICON, "icon");
       vars.put(Branding.LOGO, "logo");
       vars.put(Branding.SPLASH, "splash");

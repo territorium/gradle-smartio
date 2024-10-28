@@ -15,16 +15,16 @@
 
 package it.smartio.util.git;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.function.Consumer;
-
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.submodule.SubmoduleWalk;
 import org.eclipse.jgit.transport.CredentialsProvider;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.function.Consumer;
 
 /**
  * The {@link RepositoryVerbose} class.

@@ -23,7 +23,6 @@ import it.smartio.build.Build;
 import it.smartio.common.env.Environment;
 import it.smartio.common.task.Task;
 import it.smartio.common.task.TaskContext;
-import it.smartio.gradle.ProjectBuild;
 import it.smartio.task.property.PropertyTask;
 import it.smartio.util.git.Repository;
 import it.smartio.util.version.Revision;
@@ -35,13 +34,13 @@ import it.smartio.util.version.Version;
  */
 public class GitTaskVersion extends GitTask {
 
-  private final ProjectBuild mode;
+  private final Git.Release mode;
 
   /**
    * Constructs an instance of {@link GitTaskVersion}.
    */
   public GitTaskVersion() {
-    this(ProjectBuild.None);
+    this(Git.Release.None);
   }
 
   /**
@@ -49,7 +48,7 @@ public class GitTaskVersion extends GitTask {
    *
    * @param mode
    */
-  public GitTaskVersion(ProjectBuild mode) {
+  public GitTaskVersion(Git.Release mode) {
     this.mode = mode;
   }
 

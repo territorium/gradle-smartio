@@ -58,6 +58,7 @@ public interface Build {
 
 
   String PRODUCT_NAME     = "PRODUCT_NAME";
+  String PRODUCT_FILE     = "PRODUCT_FILE";
   String PRODUCT_RESOURCE = "PRODUCT_RESOURCE";
   String PRODUCT_MODEL    = "PRODUCT_MODEL";
   String PRODUCT_OFFLINE  = "PRODUCT_OFFLINE";

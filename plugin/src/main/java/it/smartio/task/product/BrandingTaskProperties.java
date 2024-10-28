@@ -39,6 +39,7 @@ public class BrandingTaskProperties implements Task {
   public final void handle(TaskContext context) throws IOException {
     Properties properties = new Properties();
     properties.put("name", context.getEnvironment().get(Branding.NAME));
+    properties.put("file", context.getEnvironment().get(Branding.FILE));
     properties.put("uri", context.getEnvironment().get(Branding.HOST));
     properties.put("model", context.getEnvironment().get(Branding.MODEL));
     properties.put("offline", context.getEnvironment().get(Branding.OFFLINE));

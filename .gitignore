@@ -1,6 +1,10 @@
 /bin
 /build
+/repo
+/target
 .classpath
 .gradle
 .project
 .settings
+!.settings/org.eclipse.jdt.core.prefs
+!.settings/org.eclipse.jdt.ui.prefs

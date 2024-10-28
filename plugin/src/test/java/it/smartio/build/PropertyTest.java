@@ -1,17 +1,16 @@
 
 package it.smartio.build;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.junit.jupiter.api.Test;
-
 import it.smartio.common.env.Environment;
 import it.smartio.common.task.TaskContext;
-import it.smartio.gradle.ProjectBuild;
 import it.smartio.gradle.pipeline.TestContext;
 import it.smartio.task.git.Git;
 import it.smartio.task.git.GitTaskVersion;
@@ -44,7 +43,7 @@ public class PropertyTest {
     File workingDir = new File(PropertyTest.DIRECTORY);
     TaskContext context = PropertyTest.getContext(workingDir);
 
-    GitTaskVersion task = new GitTaskVersion(ProjectBuild.Release);
+    GitTaskVersion task = new GitTaskVersion(Git.Release.Release);
     task.handle(context);
   }
 }
