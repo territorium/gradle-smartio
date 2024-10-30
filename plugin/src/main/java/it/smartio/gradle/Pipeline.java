@@ -62,10 +62,9 @@ public class Pipeline {
 
   private static final String NAME_APP = "smartIO";
 
-
-  private final GradleConfig config;
-  private final Project      project;
-  private final TaskFactory  factory;
+  private final GradleConfig  config;
+  private final Project       project;
+  private final TaskFactory   factory;
 
   /**
    * Constructs an instance of {@link Pipeline}.

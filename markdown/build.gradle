@@ -11,13 +11,13 @@ repositories {
 }
 
 
-version = '0.2.7'
+version = '0.3.0'
 group	= 'it.smartio'
 
 
 java {
   sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_21
+  targetCompatibility = JavaVersion.VERSION_11
 }
 
 

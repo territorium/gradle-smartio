@@ -70,6 +70,11 @@ public abstract class CppBuilder extends ProcessRequestBuilder {
   protected abstract void buildCommand(List<String> commands);
 
   /**
+   * Build the environment for the {@link CppBuilder}..
+   */
+  protected void buildEnvionment(Map<String, String> environment) {}
+
+  /**
    * Get the VisualCode Vars All to find the correct architecture.
    */
   private String getVcVarsAll() {
@@ -82,6 +87,9 @@ public abstract class CppBuilder extends ProcessRequestBuilder {
    */
   @Override
   public final ProcessRequest build() {
+    Map<String, String> env = new HashMap<>(this.environment);
+    buildEnvionment(env);
+
     List<String> commands = new ArrayList<>();
 
     if (OS.isWindows()) {
@@ -94,6 +102,6 @@ public abstract class CppBuilder extends ProcessRequestBuilder {
     buildCommand(arguments);
     commands.add(String.join(" ", arguments));
 
-    return ProcessRequest.create(getWorkingDir(), Environment.of(this.environment), commands);
+    return ProcessRequest.create(getWorkingDir(), Environment.of(env), commands);
   }
 }

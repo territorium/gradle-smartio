@@ -36,6 +36,7 @@ public class StageConfig {
 
 
   public String         name;
+  public String         title;
   public List<String>   device;
 
   public List<String>   cmds;

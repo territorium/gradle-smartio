@@ -15,31 +15,17 @@
 
 package it.smartio.gradle;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtensionContainer;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import it.smartio.build.Build;
-import it.smartio.build.QtPlatform;
 import it.smartio.gradle.config.PipelineConfig;
 import it.smartio.gradle.config.StageConfig;
-import it.smartio.task.TaskFactory;
-import it.smartio.task.cpp.AndroidDeployTask;
-import it.smartio.task.cpp.AndroidInstallTask;
-import it.smartio.task.cpp.MakeTask;
-import it.smartio.task.cpp.QMakeTask;
 import it.smartio.task.env.EnvironmentTask;
-import it.smartio.task.file.ArchiveTask;
-import it.smartio.task.file.CopyTask;
 import it.smartio.task.git.Git;
 import it.smartio.task.git.GitTask;
 import it.smartio.task.git.GitTaskCheckout;
@@ -48,19 +34,8 @@ import it.smartio.task.git.GitTaskResetHard;
 import it.smartio.task.git.GitTaskTag;
 import it.smartio.task.git.GitTaskVersion;
 import it.smartio.task.product.BrandingTask;
-import it.smartio.task.property.PropertyTask;
-import it.smartio.task.repo.PackageTask;
-import it.smartio.task.repo.RepositoryTask;
-import it.smartio.task.shell.ShellTask;
 import it.smartio.task.unit.XTestSuiteTask;
-import it.smartio.task.xcode.IPADeployTask;
 import it.smartio.task.xcode.IPAUploadTask;
-import it.smartio.task.xcode.XCArchiveTask;
-import it.smartio.util.file.FileSystem;
-import it.smartio.util.git.Repository;
-import it.smartio.util.git.RepositoryBuilder;
-import it.smartio.util.version.Revision;
-import it.smartio.util.version.Version;
 
 /**
  * The {@link BuildPlugin} defines the different tasks required for a smart.IO build management.
@@ -155,7 +130,7 @@ public class BuildPlugin implements Plugin<Project> {
           project.task(taskName).doLast(t -> {
             Pipeline pipeline = new Pipeline(config, project);
             pipeline.exec(p.name, s.name);
-          });
+          }).setDescription(s.title);
         }
       }
     });
