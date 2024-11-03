@@ -30,9 +30,10 @@ public class AndroidInstallTask extends MakeTask {
 
   @Override
   protected void collect(List<Task> tasks, TaskContext context) {
-    String suffix = (this.platform.abi == null) ? "" : "-" + this.platform.abi;
+    String msvc_version = context.getEnvironment().get(Build.MSVC_VERSION);
+    String suffix = (this.platform.getABI() == null) ? "" : "-" + this.platform.getABI();
     File buildPath = new File(context.getEnvironment().get(Build.BUILD_DIR), this.moduleName);
-    buildPath = new File(buildPath, this.platform.arch + suffix);
+    buildPath = new File(buildPath, this.platform.getArch(msvc_version) + suffix);
     tasks.add(new AndroidShellTask(buildPath, "android-build"));
   }
 
@@ -56,8 +57,8 @@ public class AndroidInstallTask extends MakeTask {
      * Get the QMake shell command.
      */
     @Override
-    protected final MakeBuilder getShellBuilder(TaskContext context) {
-      MakeBuilder builder = super.getShellBuilder(context);
+    protected final CppBuilder getShellBuilder(TaskContext context) {
+      MakeBuilder builder = (MakeBuilder) super.getShellBuilder(context);
       builder.setOption("INSTALL_ROOT", this.installDir);
       return builder;
     }

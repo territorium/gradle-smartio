@@ -42,10 +42,11 @@ public enum QtPlatform {
   ANDROID_X86_64("android", "android-clang", "x86_64", "android_x86_64");
 
 
-  public final String arch;
-  public final String spec;
-  public final String abi;
-  public final String abiPath;
+  private final String arch;
+  private final String spec;
+
+  private final String abi;
+  private final String abiPath;
 
 
   public final Set<String> ABIs = new HashSet<>();
@@ -62,6 +63,18 @@ public enum QtPlatform {
     this.abiPath = abiPath;
   }
 
+  public final String getArch(String version) {
+    return OS.isWindows() ? this.arch.replace("2019", version) : this.arch;
+  }
+
+  public final String getSpec() {
+    return this.spec;
+  }
+
+  public final String getABI() {
+    return this.abi;
+  }
+
   public final boolean isAndroid() {
     return (this == ANDROID) || (this == ANDROID_ARMV7) || (this == ANDROID_ARM64_V8A) || (this == ANDROID_X86)
         || (this == ANDROID_X86_64);
@@ -72,7 +85,7 @@ public enum QtPlatform {
    *
    * @param workingDir
    */
-  public final File toQtPath(File workingDir) {
+  public final File toQtPath(File workingDir, String msvcVersion) {
     switch (this) {
       case ANDROID_X86:
       case ANDROID_X86_64:
@@ -82,7 +95,7 @@ public enum QtPlatform {
 
       case ANDROID:
       default:
-        return new File(workingDir, this.arch);
+        return new File(workingDir, getArch(msvcVersion));
     }
   }
 
@@ -120,7 +133,7 @@ public enum QtPlatform {
         .stream().map(v -> v.toLowerCase()).collect(Collectors.toSet()) : Collections.emptySet();
 
     for (QtPlatform platform : QtPlatform.values()) {
-      File qtArch = platform.toQtPath(qtHome);
+      File qtArch = platform.toQtPath(qtHome, environment.get(Build.MSVC_VERSION));
       if (qtArch.exists()) {
         switch (platform) {
           case ANDROID:

@@ -36,8 +36,9 @@ public class IPAUploadTask extends ProcessTask {
 
   @Override
   protected XCRunBuilder getShellBuilder(TaskContext context) {
+    String msvc_version = context.getEnvironment().get(Build.MSVC_VERSION);
     File buildDir = new File(context.getEnvironment().get(Build.BUILD_DIR), this.moduleName);
-    buildDir = new File(buildDir, QtPlatform.IOS.arch);
+    buildDir = new File(buildDir, QtPlatform.IOS.getArch(msvc_version));
     File ipa = new File(buildDir, String.format("%s.ipa", this.targetName));
 
     System.out.println(ipa.getAbsolutePath());

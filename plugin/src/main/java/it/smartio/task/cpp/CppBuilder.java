@@ -16,6 +16,7 @@
 package it.smartio.task.cpp;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,8 +33,11 @@ import it.smartio.util.env.OS;
  */
 public abstract class CppBuilder extends ProcessRequestBuilder {
 
-  private File                      vcVarsall;
   private final Map<String, String> environment;
+
+
+  private File   msvcRoot;
+  private String msvcVersion;
 
   /**
    * Constructs an instance of {@link CppBuilder}.
@@ -46,10 +50,18 @@ public abstract class CppBuilder extends ProcessRequestBuilder {
   }
 
   /**
-   * Sets the VcVarsAll directory.
+   * Sets the MSVC VarsAll directory.
    */
-  public final CppBuilder setVcVarsAll(File vcVarsall) {
-    this.vcVarsall = vcVarsall;
+  public final CppBuilder setMsvcRoot(File root) {
+    this.msvcRoot = root;
+    return this;
+  }
+
+  /**
+   * Sets the MSVC VarsAll directory.
+   */
+  public final CppBuilder setMsvcVersion(String version) {
+    this.msvcVersion = version;
     return this;
   }
 
@@ -70,16 +82,20 @@ public abstract class CppBuilder extends ProcessRequestBuilder {
   protected abstract void buildCommand(List<String> commands);
 
   /**
-   * Build the environment for the {@link CppBuilder}..
+   * Get the VisualCode Vars All to find the correct architecture.
    */
-  protected void buildEnvionment(Map<String, String> environment) {}
+  protected final String getMsvcVersion() {
+    return msvcVersion;
+  }
 
   /**
    * Get the VisualCode Vars All to find the correct architecture.
    */
-  private String getVcVarsAll() {
-    String file = new File(this.vcVarsall, "vcvarsall.bat").getAbsolutePath();
-    return file.contains(" ") ? "\"" + file + "\"" : file;
+  protected final String getVcVarsAll() {
+    Path path = msvcRoot.toPath().resolve(msvcVersion);
+    path = path.resolve("BuildTools").resolve("VC").resolve("Auxiliary").resolve("Build");
+    String script = path.resolve("vcvarsall.bat").toFile().getAbsolutePath();
+    return script.contains(" ") ? "\"" + script + "\"" : script;
   }
 
   /**
@@ -87,13 +103,14 @@ public abstract class CppBuilder extends ProcessRequestBuilder {
    */
   @Override
   public final ProcessRequest build() {
-    Map<String, String> env = new HashMap<>(this.environment);
-    buildEnvionment(env);
-
     List<String> commands = new ArrayList<>();
 
     if (OS.isWindows()) {
-      commands.addAll(Arrays.asList(getVcVarsAll(), "x86_amd64", "&", "cmd", "/c"));
+      commands.add(getVcVarsAll());
+      commands.add("x86_amd64");
+      commands.add("&");
+      commands.add("cmd");
+      commands.add("/c");
     } else {
       commands.addAll(Arrays.asList("sh", "-c"));
     }
@@ -102,6 +119,6 @@ public abstract class CppBuilder extends ProcessRequestBuilder {
     buildCommand(arguments);
     commands.add(String.join(" ", arguments));
 
-    return ProcessRequest.create(getWorkingDir(), Environment.of(env), commands);
+    return ProcessRequest.create(getWorkingDir(), Environment.of(this.environment), commands);
   }
 }

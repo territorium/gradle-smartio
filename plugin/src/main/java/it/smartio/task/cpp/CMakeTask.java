@@ -28,29 +28,41 @@ import it.smartio.common.task.process.ProcessTask;
 import it.smartio.task.file.DeleteTask;
 import it.smartio.util.env.OS;
 
-
 /**
- * The {@link QMakeTask} prints environment variables and variables.
+ * The {@link CMakeTask} prints environment variables and variables.
  */
-public class QMakeTask extends TaskList {
+public class CMakeTask extends TaskList {
 
   private final QtPlatform platform;
   private final String     moduleName;
-  private final File       projectFile;
+  private final File       projectDir;
+
+
+  private String target;
 
   /**
-   * Creates an instance of {@link QMakeTask}.
+   * Creates an instance of {@link CMakeTask}.
    *
    * @param platform
    * @param moduleName
-   * @param projectFile
+   * @param projectDir
    */
-  public QMakeTask(QtPlatform platform, String moduleName, File projectFile) {
+  public CMakeTask(QtPlatform platform, String moduleName, File projectDir) {
     this.platform = platform;
     this.moduleName = moduleName;
-    this.projectFile = projectFile;
+    this.projectDir = projectDir;
+    this.target = null;
   }
 
+  /**
+   * Defines the CMake target.
+   *
+   * @param target
+   */
+  public CMakeTask setTarget(String target) {
+    this.target = target;
+    return this;
+  }
 
   @Override
   protected final void collect(List<Task> tasks, TaskContext context) {
@@ -61,44 +73,51 @@ public class QMakeTask extends TaskList {
       String suffix = (this.platform.getABI() == null) ? "" : "-" + this.platform.getABI();
       buildPath = new File(buildPath, this.platform.getArch(msvc_version) + suffix);
       tasks.add(new DeleteTask(buildPath));
-      tasks.add(new QMakeAndroid(this.platform, buildPath));
+      tasks.add(new CMakeAndroid(this.platform, buildPath));
     } else {
       buildPath = new File(buildPath, this.platform.getArch(msvc_version));
-      tasks.add(new DeleteTask(buildPath));
-      tasks.add(new QMakeMain(this.platform, buildPath));
+      if (target == null) {
+        // Avoid delete on building
+        tasks.add(new DeleteTask(buildPath));
+      }
+      tasks.add(new CMakeMain(this.platform, buildPath, target));
     }
   }
-
 
   /**
    * Creates a QMake process.
    */
-  private class QMakeMain extends ProcessTask {
+  private class CMakeMain extends ProcessTask {
 
     protected final QtPlatform platform;
     private final File         buildDir;
 
+    // For the CMAKE compiler on windows
+    private final String target;
+
     /**
      * @param platform
      * @param buildDir
-     * @param environment
+     * @param target
      */
-    public QMakeMain(QtPlatform platform, File buildDir) {
+    public CMakeMain(QtPlatform platform, File buildDir, String target) {
       this.platform = platform;
       this.buildDir = buildDir;
+      this.target = target;
     }
 
     /**
      * Get the QMake shell command.
      */
     @Override
-    protected QMakeBuilder getShellBuilder(TaskContext context) {
+    protected CMakeBuilder getShellBuilder(TaskContext context) {
       File qtRoot = new File(context.getEnvironment().get(Build.QT_ROOT));
       File homeDir = new File(qtRoot, context.getEnvironment().get(Build.QT_VERSION));
 
-      QMakeBuilder builder = new QMakeBuilder(this.buildDir);
-      builder.setProjectFile(QMakeTask.this.projectFile);
+      CMakeBuilder builder = new CMakeBuilder(CMakeTask.this.projectDir);
+      builder.setBuildDir(buildDir);
       builder.setHome(homeDir);
+      builder.setTarget(target);
       builder.setPlatform(this.platform);
 
       String qtConfig = context.getEnvironment().get(Build.QT_CONFIG);
@@ -115,26 +134,25 @@ public class QMakeTask extends TaskList {
     }
   }
 
-
   /**
    * Creates a QMake process for android ABI's.
    */
-  private class QMakeAndroid extends QMakeMain {
+  private class CMakeAndroid extends CMakeMain {
 
     /**
      * @param platform
      * @param buildDir
      */
-    public QMakeAndroid(QtPlatform platform, File buildDir) {
-      super(platform, buildDir);
+    public CMakeAndroid(QtPlatform platform, File buildDir) {
+      super(platform, buildDir, null);
     }
 
     /**
      * Get the QMake shell command for a android.
      */
     @Override
-    protected final QMakeBuilder getShellBuilder(TaskContext context) {
-      QMakeBuilder builder = super.getShellBuilder(context);
+    protected final CMakeBuilder getShellBuilder(TaskContext context) {
+      CMakeBuilder builder = super.getShellBuilder(context);
       builder.setEnvironment(Build.ANDROID_NDK_ROOT, context.getEnvironment().get(Build.ANDROID_NDK_ROOT));
       return builder;
     }

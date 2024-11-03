@@ -30,8 +30,9 @@ public class XCArchiveTask extends ProcessTask {
 
   @Override
   protected XCodeBuilder getShellBuilder(TaskContext context) {
+    String msvc_version = context.getEnvironment().get(Build.MSVC_VERSION);
     File buildDir = new File(context.getEnvironment().get(Build.BUILD_DIR), this.moduleName);
-    buildDir = new File(buildDir, QtPlatform.IOS.arch);
+    buildDir = new File(buildDir, QtPlatform.IOS.getArch(msvc_version));
 
     XCodeBuilder builder = new XCodeBuilder(this.targetName, buildDir);
     builder.setXCodeOperation(XCodeOperation.ARCHIVE);

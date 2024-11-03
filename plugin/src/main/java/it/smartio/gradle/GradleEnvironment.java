@@ -117,12 +117,15 @@ public class GradleEnvironment extends EnvironmentVariables {
    * Parses the environment variables for Windows.
    *
    * @param config
-   * @param environment
+   * @param env
    */
-  private void parseWindows(GradleConfig config, Environment environment) {
+  private void parseWindows(GradleConfig config, Environment env) {
     if (OS.isWindows()) {
-      if (!environment.isSet(Build.VC_VARSALL)) {
-        setVariable(Build.VC_VARSALL, config.vcvarsall);
+      if (!env.isSet(Build.MSVC_ROOT)) {
+        setVariable(Build.MSVC_ROOT, config.msvcRoot);
+      }
+      if (!env.isSet(Build.MSVC_VERSION)) {
+        setVariable(Build.MSVC_VERSION, config.msvcVersion);
       }
     }
   }
@@ -226,10 +229,12 @@ public class GradleEnvironment extends EnvironmentVariables {
       setVariable(Build.QT_BUILD, targetDir);
 
       if (config.qtAndroid == null) {
-        String pathQt = get(Build.QT_VERSION);
+        String qt_version = get(Build.QT_VERSION);
         QtPlatform platform = OS.isWindows() ? QtPlatform.WINDOWS : QtPlatform.LINUX;
         try {
-          Path androiddeployqt = Paths.get(pathQt).resolve(platform.arch);
+          String msvc_version =
+              environment.isSet(Build.MSVC_VERSION) ? environment.get(Build.MSVC_VERSION) : get(Build.MSVC_VERSION);
+          Path androiddeployqt = Paths.get(qt_version).resolve(platform.getArch(msvc_version));
           setVariable(Build.QT_ANDROID_DEPLOY, androiddeployqt.toString());
         } catch (NullPointerException e) {}
       } else {

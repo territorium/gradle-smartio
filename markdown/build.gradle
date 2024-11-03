@@ -1,13 +1,14 @@
 plugins {
-  id 'com.gradle.plugin-publish' version '1.3.0'
-  id 'java-gradle-plugin'
-  id 'maven-publish'
+    id 'java-gradle-plugin'
+    id 'com.gradle.plugin-publish' version '1.3.0'
+
+    id 'maven-publish'
 }
 
 
 repositories {
-  mavenLocal()
-  mavenCentral()
+    mavenLocal()
+    mavenCentral()
 }
 
 
@@ -16,8 +17,8 @@ group	= 'it.smartio'
 
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 
@@ -27,32 +28,32 @@ allprojects {
 
 
 dependencies {
-  implementation gradleApi()
+    implementation gradleApi()
 
-  // https://mvnrepository.com/artifact/org.apache.xmlgraphics/fop
-  implementation 'org.apache.xmlgraphics:fop:2.10'
-  // https://mvnrepository.com/artifact/org.commonmark/commonmark
-  implementation 'org.commonmark:commonmark:0.24.0'
+    // https://mvnrepository.com/artifact/org.apache.xmlgraphics/fop
+    implementation 'org.apache.xmlgraphics:fop:2.10'
+    // https://mvnrepository.com/artifact/org.commonmark/commonmark
+    implementation 'org.commonmark:commonmark:0.24.0'
 
-  // Use JUnit & TestNG
-  // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
-  testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.11.3'
-  // https://mvnrepository.com/artifact/org.testng/testng
-  testImplementation 'org.testng:testng:7.10.2'
+    // Use JUnit & TestNG
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.11.3'
+    // https://mvnrepository.com/artifact/org.testng/testng
+    testImplementation 'org.testng:testng:7.10.2'
 }
 
 
 // Configured to publish your plugin to the plugin portal
 gradlePlugin {
-  website = 'https://www.tol.info'
-  vcsUrl  = 'https://github.com/tol-smartio/markdown.git'
-  plugins {
-    create("build") {
-      id = 'it.smartio.gradle.markdown'
-      displayName = 'Markdown documenter'
-      implementationClass = 'it.smartio.build.gradle.MarkdownGradle'
-      description = "Gradle plugin to convert markdown documents into a PDF!"
-      tags.set(["markdown", "document"])
+    website = 'https://www.tol.info'
+    vcsUrl  = 'https://github.com/tol-smartio/markdown.git'
+    plugins {
+        create("build") {
+          id = 'it.smartio.gradle.markdown'
+          displayName = 'Markdown documenter'
+          implementationClass = 'it.smartio.build.gradle.MarkdownGradle'
+          description = "Gradle plugin to convert markdown documents into a PDF!"
+          tags.set(["markdown", "document"])
+       }
     }
-  }
 }

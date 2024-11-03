@@ -1,7 +1,6 @@
-/bin
-/build
-/repo
-/target
+bin
+build
+target
 .classpath
 .gradle
 .project

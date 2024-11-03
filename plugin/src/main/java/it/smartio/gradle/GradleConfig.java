@@ -60,7 +60,8 @@ public abstract class GradleConfig {
   public List<String> qtConfig;
   public String       qtAndroid;
 
-  public String       vcvarsall;
+  public String       msvcRoot;
+  public String       msvcVersion;
 
   public String       androidSdkRoot;
   public String       androidNdkVersion;
@@ -174,6 +175,7 @@ public abstract class GradleConfig {
     }
     return env;
   }
+
   /**
    * Gets the {@link Environment}.
    * 

@@ -37,7 +37,7 @@ version = '1.0.1'
 project.ext.pluginDesc = [
   id         : 'cd.go.task.gradle',
   version    : project.version,
-  goCdVersion: '20.10.0',
+  goCdVersion: '24.1.0',
   name       : 'Gradle Task Plugin for GoCD',
   description: 'Supports gradle projects',
   vendorName : 'TOL GmbH',
@@ -69,21 +69,20 @@ configurations.implementation.canBeResolved = true
 configurations.api.canBeResolved = true
 
 dependencies {
-  // https://mvnrepository.com/artifact/cd.go.plugin/go-plugin-api
-  compileOnly group: 'cd.go.plugin', name: 'go-plugin-api', version: '23.1.0'
-  //implementation group: 'cd.go.plugin', name: 'go-plugin-api', version: '21.3.0'
+	// https://mvnrepository.com/artifact/cd.go.plugin/go-plugin-api
+	implementation 'cd.go.plugin:go-plugin-api:24.3.0'
+
+	// https://mvnrepository.com/artifact/org.glassfish/javax.json
+	implementation 'org.glassfish:javax.json:1.1.4'
   
-  // https://mvnrepository.com/artifact/org.glassfish/javax.json
-  implementation group: 'org.glassfish', name: 'javax.json', version: '1.1.4'
 
-
-  // Use JUnit test framework
-  // https://mvnrepository.com/artifact/junit/junit
-  testImplementation group: 'junit', name: 'junit', version: '4.13.2'
-  // https://mvnrepository.com/artifact/org.hamcrest/hamcrest-library
-  testImplementation group: 'org.hamcrest', name: 'hamcrest-library', version: '2.2'
-  // https://mvnrepository.com/artifact/org.skyscreamer/jsonassert
-  testImplementation group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
+	// Use JUnit test framework
+	// https://mvnrepository.com/artifact/junit/junit
+	testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+	// https://mvnrepository.com/artifact/org.hamcrest/hamcrest-library
+	testImplementation group: 'org.hamcrest', name: 'hamcrest-library', version: '2.2'
+	// https://mvnrepository.com/artifact/org.skyscreamer/jsonassert
+	testImplementation group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
 }
 
 processResources {

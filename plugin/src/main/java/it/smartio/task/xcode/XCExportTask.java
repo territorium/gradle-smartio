@@ -32,8 +32,9 @@ public class XCExportTask extends ProcessTask {
 
   @Override
   protected XCodeBuilder getShellBuilder(TaskContext context) {
+    String msvc_version = context.getEnvironment().get(Build.MSVC_VERSION);
     File buildDir = new File(context.getEnvironment().get(Build.BUILD_DIR), this.moduleName);
-    buildDir = new File(buildDir, QtPlatform.IOS.arch);
+    buildDir = new File(buildDir, QtPlatform.IOS.getArch(msvc_version));
 
     File exportPList = new File(context.getWorkingDir(), context.getEnvironment().get(Build.IOS_EXPORT_PLIST));
     XCodeBuilder builder = new XCodeBuilder(this.targetName, buildDir);

@@ -55,7 +55,7 @@ public class XTestSuiteTask extends TaskList {
   protected final void collect(List<Task> tasks, TaskContext context) {
     File targetDir = new File(context.getEnvironment().get(Build.TARGET_DIR));
     Path targetPath = targetDir.toPath();
-    File binDir = targetPath.resolve(this.platform.spec).resolve("bin").toFile();
+    File binDir = targetPath.resolve(this.platform.getSpec()).resolve("bin").toFile();
     for (File test : binDir.listFiles()) {
       Matcher matcher = getPattern().matcher(test.getName());
       if (matcher.find()) {
@@ -116,6 +116,11 @@ public class XTestSuiteTask extends TaskList {
       builder.setQtHome(qtHome);
       builder.setTargetDir(targetDir);
       builder.setUnitTest(getUnittest());
+
+      if (OS.isWindows()) {
+        builder.setMsvcRoot(new File(context.getEnvironment().get(Build.MSVC_ROOT)));
+        builder.setMsvcVersion(context.getEnvironment().get(Build.MSVC_VERSION));
+      }
       return builder;
     }
   }

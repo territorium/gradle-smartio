@@ -15,9 +15,6 @@
 
 package it.smartio.gradle;
 
-import org.gradle.api.Project;
-import org.gradle.api.logging.Logger;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,6 +23,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
+
+import org.gradle.api.Project;
+import org.gradle.api.logging.Logger;
 
 import it.smartio.build.Build;
 import it.smartio.build.QtPlatform;
@@ -37,6 +37,7 @@ import it.smartio.task.TaskBuilder;
 import it.smartio.task.TaskFactory;
 import it.smartio.task.cpp.AndroidDeployTask;
 import it.smartio.task.cpp.AndroidInstallTask;
+import it.smartio.task.cpp.CMakeTask;
 import it.smartio.task.cpp.MakeTask;
 import it.smartio.task.cpp.QMakeTask;
 import it.smartio.task.file.ArchiveTask;
@@ -182,7 +183,56 @@ public class Pipeline {
           }
         });
       };
-    }).setDescription("Invokes the QMake command to the defined modules.");
+    }).setDescription("Invokes the CMake command to the defined modules.");
+
+    factory.add("cmake", (a, w) -> {
+      String module = a.get("module");
+      File projectDir = new File(w, module).exists() ? new File(w, module) : w;
+
+      return c -> {
+        Set<QtPlatform> platforms = QtPlatform.getPlatforms(c.getEnvironment());
+        platforms.stream().map(p -> new CMakeTask(p, module, projectDir)).forEach(t -> {
+          try {
+            t.handle(c);
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        });
+      };
+    }).setDescription("Invokes the CMake command to create the project.");
+
+    factory.add("cmake-build", (a, w) -> {
+      String module = a.get("module");
+      File projectDir = new File(w, module).exists() ? new File(w, module) : w;
+
+      return c -> {
+        Set<QtPlatform> platforms = QtPlatform.getPlatforms(c.getEnvironment());
+        platforms.stream().map(p -> new CMakeTask(p, module, projectDir).setTarget("all")).forEach(t -> {
+          try {
+            t.handle(c);
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        });
+      };
+    }).setDescription("Invokes the CMake command to invoke the specific build system.");
+
+
+    factory.add("cmake-clean", (a, w) -> {
+      String module = a.get("module");
+      File projectDir = new File(w, module).exists() ? new File(w, module) : w;
+
+      return c -> {
+        Set<QtPlatform> platforms = QtPlatform.getPlatforms(c.getEnvironment());
+        platforms.stream().map(p -> new CMakeTask(p, module, projectDir).setTarget("clean")).forEach(t -> {
+          try {
+            t.handle(c);
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        });
+      };
+    }).setDescription("Invokes the CMake command to invoke the specific build clean.");
 
     factory.add("clean", (a, w) -> c -> {
       String module = a.get("module");

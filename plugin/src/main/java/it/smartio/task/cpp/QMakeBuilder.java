@@ -90,14 +90,15 @@ public class QMakeBuilder extends CppBuilder {
    */
   @Override
   protected void buildCommand(List<String> commands) {
-    File qmake = this.platform.toQtPath(this.home).toPath().resolve("bin").resolve(this.executable).toFile();
+    File qmake =
+        this.platform.toQtPath(this.home, getMsvcVersion()).toPath().resolve("bin").resolve(this.executable).toFile();
     if (!qmake.exists() || qmake.isDirectory()) {
       throw new RuntimeException("Invalid command: " + qmake);
     }
 
     commands.add(qmake.getAbsolutePath());
     commands.add("-spec");
-    commands.add(this.platform.spec);
+    commands.add(this.platform.getSpec());
 
     if ((this.platform == QtPlatform.ANDROID) && !this.platform.ABIs.isEmpty()) {
       commands.add(String.format("'%s=%s'", Build.ANDROID_ABIS, String.join(" ", this.platform.ABIs)));

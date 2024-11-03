@@ -40,6 +40,9 @@ public class XUnitTestBuilder extends ProcessRequestBuilder {
   private File   targetDir;
   private File   qtHome;
 
+  private File   msvcRoot;
+  private String msvcVersion;
+
   /**
    * Constructs an instance of {@link XUnitTestBuilder}.
    *
@@ -74,12 +77,29 @@ public class XUnitTestBuilder extends ProcessRequestBuilder {
   }
 
   /**
+   * Sets the MSVC VarsAll directory.
+   */
+  public final XUnitTestBuilder setMsvcRoot(File root) {
+    this.msvcRoot = root;
+    return this;
+  }
+
+  /**
+   * Sets the MSVC VarsAll directory.
+   */
+  public final XUnitTestBuilder setMsvcVersion(String version) {
+    this.msvcVersion = version;
+    return this;
+  }
+
+  /**
    * Get the VisualCode Vars All to find the correct architecture.
    */
-  private static String getVcVarsAll() {
-    File path = new File(System.getenv(Build.VC_VARSALL));
-    String file = new File(path, "vcvarsall.bat").getAbsolutePath();
-    return file.contains(" ") ? "\"" + file + "\"" : file;
+  protected final String getVcVarsAll() {
+    Path path = msvcRoot.toPath().resolve(msvcVersion);
+    path = path.resolve("BuildTools").resolve("VC").resolve("Auxiliary").resolve("Build");
+    String script = path.resolve("vcvarsall.bat").toFile().getAbsolutePath();
+    return script.contains(" ") ? "\"" + script + "\"" : script;
   }
 
   /**
@@ -96,23 +116,23 @@ public class XUnitTestBuilder extends ProcessRequestBuilder {
     if (OS.isWindows()) {
       commands.add("cmd");
       commands.add("/c");
-      commands.add(XUnitTestBuilder.getVcVarsAll());
+      commands.add(getVcVarsAll());
       commands.add("x86_amd64");
       commands.add("&");
     }
 
     QtPlatform arch = OS.isWindows() ? QtPlatform.WINDOWS : QtPlatform.LINUX;
-    Path lib = this.targetDir.toPath().resolve(arch.spec).resolve("lib");
+    Path lib = this.targetDir.toPath().resolve(arch.getSpec()).resolve("lib");
 
     Map<String, String> environment = new HashMap<>();
     if (OS.isWindows()) {
-      Path bin = this.qtHome.toPath().resolve(arch.arch).resolve("bin");
+      Path bin = this.qtHome.toPath().resolve(arch.getArch(msvcVersion)).resolve("bin");
       environment.put(Build.PATH_WIN64, lib.toAbsolutePath().toString() + ";" + bin.toAbsolutePath().toString());
     } else {
       environment.put(Build.LD_LIBRARY_PATH, lib.toAbsolutePath().toString());
     }
 
-    Path test = this.targetDir.toPath().resolve(arch.spec).resolve("bin");
+    Path test = this.targetDir.toPath().resolve(arch.getSpec()).resolve("bin");
     commands.add(test.resolve(OS.isWindows() ? this.unitTest + ".exe" : this.unitTest).toString());
     commands.add("-xunitxml");
 

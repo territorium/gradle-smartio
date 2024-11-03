@@ -46,7 +46,8 @@ public interface Build {
   String IOS_UPLOAD_API            = "IOS_UPLOAD_API";
   String IOS_UPLOAD_ISSUER         = "IOS_UPLOAD_ISSUER";
 
-  String VC_VARSALL                = "VC_VARSALL";
+  String MSVC_ROOT                 = "MSVC_ROOT";
+  String MSVC_VERSION              = "MSVC_VERSION";
 
   String REVISION                  = "REVISION";
   String PACKAGE_RELEASE           = "RELEASE";
@@ -67,5 +68,4 @@ public interface Build {
   // deprecated
   String QT_BUILD = "QT_BUILD";
   String QT_ARCH  = "QT_ARCH";
-
 }

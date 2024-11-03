@@ -62,13 +62,14 @@ public class MakeTask extends TaskList {
 
   @Override
   protected void collect(List<Task> tasks, TaskContext context) {
+    String msvc_version = context.getEnvironment().get(Build.MSVC_VERSION);
     File buildPath = new File(context.getEnvironment().get(Build.BUILD_DIR), this.moduleName);
 
     if (this.platform.isAndroid()) {
-      buildPath = new File(buildPath, this.platform.arch + "-" + this.platform.abi);
+      buildPath = new File(buildPath, this.platform.getArch(msvc_version) + "-" + this.platform.getABI());
       tasks.add(new MakeShellTask(buildPath));
     } else {
-      buildPath = new File(buildPath, this.platform.arch);
+      buildPath = new File(buildPath, this.platform.getArch(msvc_version));
       tasks.add(new MakeShellTask(buildPath));
     }
   }
@@ -91,13 +92,14 @@ public class MakeTask extends TaskList {
      * Get the QMake shell command.
      */
     @Override
-    protected MakeBuilder getShellBuilder(TaskContext context) {
+    protected CppBuilder getShellBuilder(TaskContext context) {
       MakeBuilder builder = new MakeBuilder(this.buildDir);
       builder.setCommand(MakeTask.this.command);
       if (OS.isWindows()) {
         // For the JOM compiler on windows
         builder.setRoot(new File(context.getEnvironment().get(Build.QT_ROOT)));
-        builder.setVcVarsAll(new File(context.getEnvironment().get(Build.VC_VARSALL)));
+        builder.setMsvcRoot(new File(context.getEnvironment().get(Build.MSVC_ROOT)));
+        builder.setMsvcVersion(context.getEnvironment().get(Build.MSVC_VERSION));
       }
       return builder;
     }

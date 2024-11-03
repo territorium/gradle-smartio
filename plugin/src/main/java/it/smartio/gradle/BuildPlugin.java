@@ -15,13 +15,13 @@
 
 package it.smartio.gradle;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtensionContainer;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import it.smartio.gradle.config.PipelineConfig;
 import it.smartio.gradle.config.StageConfig;
