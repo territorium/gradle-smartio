@@ -15,12 +15,18 @@
 
 package it.smartio.task.git;
 
+import org.gradle.api.Project;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import it.smartio.common.env.Environment;
 import it.smartio.common.task.Task;
 import it.smartio.common.task.TaskContext;
+import it.smartio.gradle.GradleConfig;
+import it.smartio.gradle.GradleContext;
 import it.smartio.util.git.Repository;
 import it.smartio.util.git.RepositoryBuilder;
 import it.smartio.util.version.Revision;
@@ -81,5 +87,34 @@ public class GitTask implements Task {
     if (context.getEnvironment().isSet(Git.MODULES)) {
       context.getLogger().onInfo("GIT Modules:\t {}", context.getEnvironment().get(Git.MODULES));
     }
+  }
+
+  /**
+   * Executes a {@link GitTask}.
+   *
+   * @param task
+   * @param config
+   */
+  public static void execGit(GitTask task, GradleConfig config) {
+    Project project = config.getProject();
+    File workingDir =
+        config.hasParameter("workingDir") ? new File(config.getParameter("workingDir")) : project.getProjectDir();
+
+    if (!workingDir.isAbsolute()) {
+      workingDir = project.getProjectDir().toPath().resolve(workingDir.toPath()).toFile();
+    }
+
+    Map<String, String> env = new HashMap<>();
+    if (config.remote != null) {
+      env.put(Git.REMOTE, config.remote);
+    }
+    env.put(Git.BRANCH, config.hasParameter("branch") ? config.getParameter("branch") : config.branch);
+    env.put(Git.USERNAME, config.hasParameter("username") ? config.getParameter("username") : config.username);
+    env.put(Git.PASSWORD, config.hasParameter("password") ? config.getParameter("password") : config.password);
+    if (config.hasParameter("modules")) {
+      env.put(Git.MODULES, config.getParameter("modules"));
+    }
+
+    task.handle(new GradleContext(project.getLogger(), workingDir, Environment.of(env)));
   }
 }

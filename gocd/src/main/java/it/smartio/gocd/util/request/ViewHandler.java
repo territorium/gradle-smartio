@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ThoughtWorks, Inc.
+ * Copyright 2024 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -18,10 +18,12 @@ import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
-
-import it.smartio.gocd.util.Resources;
 
 /**
  * This message is sent by the GoCD server to the plugin to get an AngularJS based HTML template to
@@ -66,7 +68,17 @@ public class ViewHandler implements RequestHandler {
   public GoPluginApiResponse handle(GoPluginApiRequest request) {
     JsonObjectBuilder object = Json.createObjectBuilder();
     object.add(ViewHandler.DISPLAY, this.display);
-    object.add(ViewHandler.TEMPLATE, Resources.readString(this.template));
+    object.add(ViewHandler.TEMPLATE, ViewHandler.getResource(this.template));
     return DefaultGoPluginApiResponse.success(object.build().toString());
+  }
+
+
+  private static String getResource(String resourceFile) {
+    InputStream stream = ViewHandler.class.getResourceAsStream(resourceFile);
+    try {
+      return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      throw new RuntimeException("Could not find resource " + resourceFile, e);
+    }
   }
 }

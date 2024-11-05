@@ -15,6 +15,9 @@
 
 package it.smartio.gradle;
 
+import org.gradle.api.Project;
+import org.gradle.api.logging.Logger;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,9 +26,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
-
-import org.gradle.api.Project;
-import org.gradle.api.logging.Logger;
 
 import it.smartio.build.Build;
 import it.smartio.build.QtPlatform;
@@ -104,6 +104,7 @@ public class Pipeline {
     Logger logger = project.getLogger();
     File workingDir = config.getWorkingDir();
     Environment environment = config.getEnvironment(logger, workingDir);
+    logger.warn(environment.toString());
 
     Arguments arguments = new Arguments(config.getProject().getProperties());
 

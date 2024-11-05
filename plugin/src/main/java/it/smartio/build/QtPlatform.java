@@ -33,7 +33,7 @@ public enum QtPlatform {
 
   IOS("ios", "macx-ios-clang"),
   LINUX("gcc_64", "linux-g++"),
-  WINDOWS("msvc2019_64", "win32-msvc"),
+  WINDOWS("msvcXXXX_64", "win32-msvc"),
 
   ANDROID("android", "android-clang"),
   ANDROID_ARM64_V8A("android", "android-clang", "arm64-v8a", "android_arm64_v8a"),
@@ -64,7 +64,7 @@ public enum QtPlatform {
   }
 
   public final String getArch(String version) {
-    return OS.isWindows() ? this.arch.replace("2019", version) : this.arch;
+    return OS.isWindows() ? this.arch.replace("XXXX", version) : this.arch;
   }
 
   public final String getSpec() {

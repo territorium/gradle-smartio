@@ -23,9 +23,7 @@ import org.gradle.api.tasks.Nested;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -34,7 +32,6 @@ import it.smartio.gradle.config.AndroidConfig;
 import it.smartio.gradle.config.MailConfig;
 import it.smartio.gradle.config.PipelineConfig;
 import it.smartio.gradle.config.XCodeConfig;
-import it.smartio.task.git.Git;
 
 /**
  * The {@link GradleConfig} class.
@@ -157,23 +154,6 @@ public abstract class GradleConfig {
     C instance = this.project.getObjects().newInstance(clazz);
     action.execute(instance);
     return instance;
-  }
-
-  /**
-   * Converts the {@link GitConfig} to an {@link Environment} instance.
-   */
-  public final Map<String, String> toGitEnv() {
-    Map<String, String> env = new HashMap<>();
-    if (this.remote != null) {
-      env.put(Git.REMOTE, this.remote);
-    }
-    env.put(Git.BRANCH, hasParameter("branch") ? getParameter("branch") : this.branch);
-    env.put(Git.USERNAME, hasParameter("username") ? getParameter("username") : this.username);
-    env.put(Git.PASSWORD, hasParameter("password") ? getParameter("password") : this.password);
-    if (hasParameter("modules")) {
-      env.put(Git.MODULES, getParameter("modules"));
-    }
-    return env;
   }
 
   /**

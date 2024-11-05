@@ -31,13 +31,13 @@ def gitRevision = { ->
 project.ext.gitRevision = gitRevision()
 
 group = 'it.smartio.gocd.plugin'
-version = '1.0.1'
+version = '1.0.16'
 
 // these values that go into plugin.xml
 project.ext.pluginDesc = [
   id         : 'cd.go.task.gradle',
   version    : project.version,
-  goCdVersion: '24.1.0',
+  goCdVersion: '24.3.0',
   name       : 'Gradle Task Plugin for GoCD',
   description: 'Supports gradle projects',
   vendorName : 'TOL GmbH',
@@ -46,8 +46,8 @@ project.ext.pluginDesc = [
 
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
+  sourceCompatibility = JavaVersion.VERSION_1_9
+  targetCompatibility = JavaVersion.VERSION_1_9
 }
 
 

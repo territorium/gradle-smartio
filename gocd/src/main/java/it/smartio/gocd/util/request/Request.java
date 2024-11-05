@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ThoughtWorks, Inc.
+ * Copyright 2024 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -16,16 +16,8 @@ package it.smartio.gocd.util.request;
 
 public interface Request {
 
-  String MATERIAL_CONFIG           = "scm-configuration";
-  String MATERIAL_VIEW             = "scm-view";
-  String MATERIAL_VALIDATE         = "validate-scm-configuration";
-  String MATERIAL_CHECK_CONNECTION = "check-scm-connection";
-  String MATERIAL_REVISION         = "latest-revision";
-  String MATERIAL_REVISION_SINCE   = "latest-revisions-since";
-  String MATERIAL_CHECKOUT         = "checkout";
-
-  String TASK_VIEW                 = "view";
-  String TASK_CONFIG               = "configuration";
-  String TASK_VALIDATE             = "validate";
-  String TASK_EXECUTE              = "execute";
+  String TASK_VIEW     = "view";
+  String TASK_CONFIG   = "configuration";
+  String TASK_VALIDATE = "validate";
+  String TASK_EXECUTE  = "execute";
 }

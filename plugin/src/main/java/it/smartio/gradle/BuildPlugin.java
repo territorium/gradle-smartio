@@ -17,25 +17,18 @@ package it.smartio.gradle;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.plugins.ExtensionContainer;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import it.smartio.gradle.config.PipelineConfig;
 import it.smartio.gradle.config.StageConfig;
-import it.smartio.task.env.EnvironmentTask;
-import it.smartio.task.git.Git;
-import it.smartio.task.git.GitTask;
-import it.smartio.task.git.GitTaskCheckout;
-import it.smartio.task.git.GitTaskPull;
-import it.smartio.task.git.GitTaskResetHard;
-import it.smartio.task.git.GitTaskTag;
-import it.smartio.task.git.GitTaskVersion;
-import it.smartio.task.product.BrandingTask;
-import it.smartio.task.unit.XTestSuiteTask;
-import it.smartio.task.xcode.IPAUploadTask;
+import it.smartio.gradle.task.TaskApp;
+import it.smartio.gradle.task.TaskEnv;
+import it.smartio.gradle.task.TaskGit;
+import it.smartio.gradle.task.TaskIpaUpload;
+import it.smartio.gradle.task.TaskPipeline;
+import it.smartio.gradle.task.TaskUnitTest;
+import it.smartio.task.TaskDefinition;
 
 /**
  * The {@link BuildPlugin} defines the different tasks required for a smart.IO build management.
@@ -44,76 +37,26 @@ public class BuildPlugin implements Plugin<Project> {
 
   private static final String NAME_CONFIG = "smartIO";
 
+  public static GradleConfig findConfig(Project project) {
+    ExtensionContainer extension = project.getExtensions();
+    return extension.findByType(GradleConfig.class);
+  }
+
   @Override
   public void apply(Project project) {
     ExtensionContainer extension = project.getExtensions();
     GradleConfig config = extension.create(BuildPlugin.NAME_CONFIG, GradleConfig.class);
 
-    // Tasks
-    project.task("env").doLast(t -> TaskExecutor.exec(new EnvironmentTask(), config))
-        .setDescription("Shows the current environment!");
+    project.getTasks().register("git", TaskGit.class);
+    project.getTasks().register("env", TaskEnv.class);
+    project.getTasks().register("run", TaskPipeline.class);
 
-    appendGit(project, config);
-    appendBuild(project, config);
     appendPipeline(project, config);
     appendPipelineTasks(project, config);
 
-    project.task("unittest")
-        .doLast(t -> TaskExecutor.exec(new XTestSuiteTask.XUnit(config.getParameter("test")), config));
-
-    // TODO
-    project.task("branding").doLast(t -> {
-      Arguments args = new Arguments(config.getProject().getProperties());
-      TaskExecutor.exec(new BrandingTask(args.get("source"), args.get("target")), config);
-    }).setDescription("Creates the branding from a build.properties!");
-
-    project.task("ipa-upload")
-        .doLast(t -> TaskExecutor
-            .exec(new IPAUploadTask("smartIO", "app", (String) t.getProject().getProperties().get("artifact")), config))
-        .setDescription("Executes a pipeline!");
-  }
-
-  /**
-   * Install all GIT related tasks.
-   *
-   * @param project
-   * @param config
-   */
-  protected void appendGit(Project project, GradleConfig config) {
-    project.task("git").doLast(t -> TaskExecutor.execGit(new GitTask(), config))
-        .setDescription("Shows the git related informations!");
-    project.task("git-reset").doLast(t -> TaskExecutor.execGit(new GitTaskCheckout(), config));
-    project.task("git-reset-hard").doLast(t -> TaskExecutor.execGit(new GitTaskResetHard(), config));
-
-    project.task("git-pull").doLast(t -> TaskExecutor.execGit(new GitTaskPull(), config));
-    project.task("git-tag").doLast(t -> TaskExecutor.execGit(new GitTaskTag(), config));
-
-    project.task("git-build").doLast(t -> TaskExecutor.execGit(new GitTaskVersion(), config));
-    project.task("git-patch").doLast(t -> TaskExecutor.execGit(new GitTaskVersion(Git.Release.Patch), config));
-    project.task("git-release").doLast(t -> TaskExecutor.execGit(new GitTaskVersion(Git.Release.Release), config));
-  }
-
-  /**
-   * Install all pipeline related tasks. Parses the pipeline configuration
-   *
-   * @param project
-   * @param config
-   */
-  @Deprecated
-  protected void appendBuild(Project project, GradleConfig config) {
-    project.task("build").doFirst(t -> {
-      if (!config.hasParameter("task")) {
-        project.getLogger().warn("Missing parameter 'task'!");
-        return;
-      }
-      String names = config.getParameter("task");
-      String name = names.contains(":") ? names.substring(0, names.indexOf(":")) : names;
-      List<String> stages = names.contains(":") ? Arrays.asList(names.substring(names.indexOf(":") + 1).split(","))
-          : Collections.emptyList();
-
-      Pipeline pipeline = new Pipeline(config, project);
-      pipeline.exec(name, stages.isEmpty() ? null : stages.get(0));
-    }).setDescription("Executes a pipeline!");
+    project.getTasks().register("branding", TaskApp.class);
+    project.getTasks().register("unittest", TaskUnitTest.class);
+    project.getTasks().register("ipa-upload", TaskIpaUpload.class);
   }
 
   /**
@@ -126,11 +69,11 @@ public class BuildPlugin implements Plugin<Project> {
     project.afterEvaluate(a -> {
       for (PipelineConfig p : config.getPipelines()) {
         for (StageConfig s : p.getStages()) {
-          String taskName = String.format("%s-%s", p.name, s.name);
-          project.task(taskName).doLast(t -> {
-            Pipeline pipeline = new Pipeline(config, project);
-            pipeline.exec(p.name, s.name);
-          }).setDescription(s.title);
+          String taskName = String.format("run-%s-%s", p.name, s.name);
+          Task task = project.task(taskName);
+          task.setDescription(s.title);
+          task.setGroup(String.format("smart.io pipeline '%s'", p.name));
+          task.doLast(t -> new Pipeline(config, project).exec(p.name, s.name));
         }
       }
     });
@@ -144,9 +87,12 @@ public class BuildPlugin implements Plugin<Project> {
    */
   protected void appendPipelineTasks(Project project, GradleConfig config) {
     project.afterEvaluate(a -> {
-      Pipeline.newFactory().getTasks().forEach(n -> project.task("task-" + n.getName()).doLast(t -> {
-        project.getLogger().warn(n.getName());
-      }).setDescription(n.getDescription()));
+      for (TaskDefinition def : Pipeline.newFactory().getTasks()) {
+        Task task = project.task("task-" + def.getName());
+        task.setDescription(def.getDescription());
+        task.setGroup("smart.io tasks");
+        task.doLast(t -> project.getLogger().warn(def.getName()));
+      }
     });
   }
 }

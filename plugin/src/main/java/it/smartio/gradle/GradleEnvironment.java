@@ -15,8 +15,6 @@
 
 package it.smartio.gradle;
 
-import org.gradle.api.logging.Logger;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -320,18 +318,6 @@ public class GradleEnvironment extends EnvironmentVariables {
 
     env.parseRevisionFile(env.get(Build.TARGET_DIR));
     env.parseBrandings(workingDir);
-
-
-    // Publish the local variables on the Gradle System Environment.
-    // Required for Markdown files.
-    Logger logger = config.getProject().getLogger();
-    for (String name : env.getVariables()) {
-      String value = env.getVariable(name);
-      if (value != null) {
-        System.getProperties().put(name, value);
-        logger.warn("  {} =\t'{}'", name, value);
-      }
-    }
 
     return env.getVariables().isEmpty() ? environment : env;
   }

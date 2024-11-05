@@ -41,9 +41,6 @@ public class IPAUploadTask extends ProcessTask {
     buildDir = new File(buildDir, QtPlatform.IOS.getArch(msvc_version));
     File ipa = new File(buildDir, String.format("%s.ipa", this.targetName));
 
-    System.out.println(ipa.getAbsolutePath());
-    System.out.println(this.artifact);
-
     if (this.artifact != null) {
       File workingDir = context.getWorkingDir();
       String pattern = this.artifact;
