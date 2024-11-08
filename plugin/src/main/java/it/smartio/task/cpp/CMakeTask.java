@@ -72,8 +72,11 @@ public class CMakeTask extends TaskList {
     if (this.platform.isAndroid()) {
       String suffix = (this.platform.getABI() == null) ? "" : "-" + this.platform.getABI();
       buildPath = new File(buildPath, this.platform.getArch(msvc_version) + suffix);
-      tasks.add(new DeleteTask(buildPath));
-      tasks.add(new CMakeAndroid(this.platform, buildPath));
+      if (target == null) {
+        // Avoid delete on building
+        tasks.add(new DeleteTask(buildPath));
+      }
+      tasks.add(new CMakeAndroid(this.platform, buildPath, target));
     } else {
       buildPath = new File(buildPath, this.platform.getArch(msvc_version));
       if (target == null) {
@@ -142,9 +145,10 @@ public class CMakeTask extends TaskList {
     /**
      * @param platform
      * @param buildDir
+     * @param target
      */
-    public CMakeAndroid(QtPlatform platform, File buildDir) {
-      super(platform, buildDir, null);
+    public CMakeAndroid(QtPlatform platform, File buildDir, String target) {
+      super(platform, buildDir, target);
     }
 
     /**

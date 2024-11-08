@@ -53,7 +53,7 @@ public enum QtPlatform {
 
 
   private QtPlatform(String arch, String spec) {
-    this(arch, spec, null, null);
+    this(arch, spec, null, arch);
   }
 
   private QtPlatform(String arch, String spec, String abi, String abiPath) {
@@ -73,6 +73,10 @@ public enum QtPlatform {
 
   public final String getABI() {
     return this.abi;
+  }
+
+  public final String getAbiPath(String version) {
+    return OS.isWindows() ? this.abiPath.replace("XXXX", version) : this.abiPath;
   }
 
   public final boolean isAndroid() {

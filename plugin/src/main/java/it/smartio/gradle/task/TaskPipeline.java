@@ -22,6 +22,7 @@ import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.options.Option;
 
 import it.smartio.gradle.BuildPlugin;
+import it.smartio.gradle.GradleConfig;
 import it.smartio.gradle.GradleTask;
 import it.smartio.gradle.Pipeline;
 
@@ -51,7 +52,8 @@ public abstract class TaskPipeline extends GradleTask {
       return;
     }
 
-    Pipeline pipeline = new Pipeline(BuildPlugin.findConfig(getProject()), getProject());
+    GradleConfig config = BuildPlugin.findConfig(getProject());
+    Pipeline pipeline = new Pipeline(config, getProject());
     pipeline.exec(getJob().get(), getStage().getOrNull());
   }
 }

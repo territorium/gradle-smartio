@@ -30,20 +30,18 @@ public abstract class GradleTask extends DefaultTask {
     Environment environment = Environment.system();
     Logger logger = config.getProject().getLogger();
 
-    logger.warn("WorkingDir: '{}'", workingDir);
-    logger.warn("Loading environment variables...");
     try {
       environment = GradleEnvironment.parse(config, workingDir, environment);
-      logger.warn(environment.toString());
     } catch (Throwable e) {
       logger.error("Couldn't load environment variables!", e);
       throw new RuntimeException(e);
+    } finally {
+      logger.warn("WorkingDir: {}", workingDir);
+      logger.warn("Environment variables:{}\n", environment.toString());
     }
-    logger.warn("Environment variables loaded!");
 
-    GradleContext context = new GradleContext(logger, workingDir, environment);
     try {
-      task.handle(context);
+      task.handle(new GradleContext(logger, workingDir, environment));
     } catch (IOException e) {
       e.printStackTrace();
     }

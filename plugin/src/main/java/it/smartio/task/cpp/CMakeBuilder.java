@@ -120,7 +120,7 @@ public class CMakeBuilder extends CppBuilder {
     commands.add(this.buildDir.getAbsolutePath());
     commands.add(".");
 
-    Path qt_arch = home.toPath().resolve(platform.getArch(getMsvcVersion()));
+    Path qt_arch = home.toPath().resolve(platform.getAbiPath(getMsvcVersion()));
     Path toolchain = qt_arch.resolve("lib").resolve("cmake").resolve("Qt6").resolve("qt.toolchain.cmake");
 
     commands.add("-DCMAKE_PREFIX_PATH:PATH=" + qt_arch.toString());
@@ -137,6 +137,7 @@ public class CMakeBuilder extends CppBuilder {
         commands.add("-DCMAKE_GENERATOR:STRING=\"Unix Makefiles\"");
         break;
 
+      case ANDROID:
       case WINDOWS:
         commands.add("-DCMAKE_GENERATOR:STRING=Ninja");
         break;

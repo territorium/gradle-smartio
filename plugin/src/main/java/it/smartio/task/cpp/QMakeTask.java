@@ -69,7 +69,6 @@ public class QMakeTask extends TaskList {
     }
   }
 
-
   /**
    * Creates a QMake process.
    */

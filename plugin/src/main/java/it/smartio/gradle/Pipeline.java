@@ -64,7 +64,6 @@ public class Pipeline {
   private static final String NAME_APP = "smartIO";
 
   private final GradleConfig  config;
-  private final Project       project;
   private final TaskFactory   factory;
 
   /**
@@ -75,7 +74,6 @@ public class Pipeline {
    */
   public Pipeline(GradleConfig config, Project project) {
     this.config = config;
-    this.project = project;
     this.factory = Pipeline.newFactory();
   }
 
@@ -88,7 +86,7 @@ public class Pipeline {
   private Stream<StageConfig> getStages(String name, String stage) {
     Optional<PipelineConfig> optional = config.getPipelines().stream().filter(c -> c.name.equals(name)).findFirst();
     if (!optional.isPresent()) {
-      project.getLogger().warn("Pipeline '{}' not found!", name);
+      config.getProject().getLogger().warn("Pipeline '{}' not found!", name);
       throw new RuntimeException(String.format("Pipeline '%s' not found!", name));
     }
     return optional.get().getStages().stream().filter(s -> s.name.equals(stage));
@@ -101,7 +99,7 @@ public class Pipeline {
    * @param stage
    */
   public final void exec(String name, String stage) {
-    Logger logger = project.getLogger();
+    Logger logger = config.getProject().getLogger();
     File workingDir = config.getWorkingDir();
     Environment environment = config.getEnvironment(logger, workingDir);
     logger.warn(environment.toString());
