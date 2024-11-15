@@ -51,9 +51,15 @@ public class IPAUploadTask extends ProcessTask {
       }
 
       try {
-        for (FileMatcher matcher : FilePattern.matches(workingDir, FilePattern.toRegExp(pattern))) {
-          ipa = matcher.getFile();
+        File file = new File(workingDir, pattern);
+        if (file.exists()) {
+          ipa = file;
           buildDir = workingDir;
+        } else {
+          for (FileMatcher matcher : FilePattern.matches(workingDir, FilePattern.toRegExp(pattern))) {
+            ipa = matcher.getFile();
+            buildDir = workingDir;
+          }
         }
       } catch (IOException e) {}
     }
