@@ -286,7 +286,9 @@ public class GradleEnvironment extends EnvironmentVariables {
       try {
         props.load(new FileReader(buildProperties));
         setVariable(Build.PRODUCT_NAME, props.getProperty("name"));
-        setVariable(Build.PRODUCT_FILE, props.getProperty("file"));
+        if (props.getProperty("file") != null) {
+          setVariable(Build.PRODUCT_FILE, props.getProperty("file"));
+        }
         setVariable(Build.IOS_EXPORT_ID, props.getProperty("ios.id"));
         setVariable(Build.ANDROID_ID, props.getProperty("android.id"));
       } catch (IOException e) {
